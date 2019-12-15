@@ -12,7 +12,6 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 
-
 class MainVerticle : AbstractVerticle() {
     override fun start(startFuture: Future<Void>) {
         var options = HttpServerOptions()
@@ -31,69 +30,31 @@ class MainVerticle : AbstractVerticle() {
     private fun createRouter() = Router.router(vertx).apply {
         get("/").handler(handlerRoot)
 
-        get("/api/categories").handler(handlerGetCategories)
-        post("/api/categories").handler(handlerPostCategories)
-
-        get("/api/products").handler(handlerCountries)
+        get("/api/categories").handler(CategoryController().handlerGetCategories)
+        post("/api/categories").handler(CategoryController().handlerPostCategories)
+        put("/api/categories/:id").handler(CategoryController().handlerPutCategories)
+        delete("/api/categories/:id").handler(CategoryController().handlerDeleteCategories)
+        
+        // get("/api/products").handler(handlerGetProducts)
+        // post("/api/products").handler(handlerPostProducts)
+        // put("/api/products/:id").handler(handlerPutProducts)
+        // delete("/api/products/:id").handler(handlerDeleteProducts)
     }
     
     // Handlers
     @Autowired
     private var categoriesDb = Category.Factory
     private val mapper = jacksonObjectMapper()
-    // private var parser = JsonParser.newParser()
-    // private var totalBuffer = Buffer.buffer()
-    // private fun <T> convertObject(objectClass:Class<T>, transformedObject:JsonObject):T {
-    //     return transformedObject.mapTo(objectClass)
-    // }
 
     val handlerRoot = Handler<RoutingContext> { req ->
+        // react goes here
         req.response().end("Welcome!")
     }
 
-    val handlerGetCategories = Handler<RoutingContext> { req ->
-        fun categories() = categoriesDb.getCategories()
-        println(categories())
-        var list = categoriesDb.getCategories()
-        println(list)
-
-        val categoryList = categories()
-        req.response().endWithJson(categoryList)
-    }
-
-    val handlerPostCategories = Handler<RoutingContext> { req ->
-        // req.response().endWithJson(MOCK_PRODUCTS)
-
-        req.response().endHandler({ totalBuffer ->
-            println(1111)
-            // println("Full body received, length = ${totalBuffer}")
-            // println("Full body received, length = ${req.getBodyAsJson()}")
-        })
-
-
-        req.request().bodyHandler({ body ->
-            val bodyJson = JsonObject(body)
-            val mappedCategory: Category = mapper.readValue(bodyJson.toString())
-
-            categoriesDb.addCategory(mappedCategory)
-    
-            req.response().endWithJson(mappedCategory)
-        })
-    }
-
     val handlerCountries = Handler<RoutingContext> { req ->
+        println(req)
         // req.response().endWithJson(MOCK_PRODUCTS.map { it.country }.distinct().sortedBy { it.code })
     }
-
-    // private val MOCK_PRODUCTS by lazy {
-    //     listOf(
-    //         Category(0, "Legendary", null, listOf(Product(0, "Sword", 300.0, null))),
-    //         Category(0, "Epic", null, listOf(Product(0, "Hammer", 300.0, null))),
-    //         Category(0, "Rare", null, listOf(Product(0, "Gun", 300.0, null))),
-    //         Category(0, "Normal", null, listOf(Product(0, "Dagger", 300.0, null)))
-    //     )
-    // }
-
 
     /**
      * Extension to the HTTP response to output JSON objects.
