@@ -24,13 +24,25 @@ class CategoryController() {
     private val mapper = jacksonObjectMapper()
 
     val handlerGetCategories = Handler<RoutingContext> { req ->
-        fun categories() = categoriesDb.getCategories()
-        println(categories())
-        var list = categoriesDb.getCategories()
-        println(list)
+        val categoryList = categoriesDb.getCategories()
 
-        val categoryList = categories()
         req.response().endWithJson(categoryList)
+    }
+
+    val handlerGetCategory = Handler<RoutingContext> { req ->
+        val catId = req.request().getParam("id").toLongOrNull()
+        var category : Category? = null
+
+        if (catId != null) {
+            category = categoriesDb.getCategoryById(catId)
+        }
+
+        if (catId == null || category == null) {
+            req.response().setStatusCode(404).end("RECORD NOT FOUND")
+        } else {
+            req.response().endWithJson(category)
+        }
+
     }
 
     val handlerPostCategories = Handler<RoutingContext> { req ->

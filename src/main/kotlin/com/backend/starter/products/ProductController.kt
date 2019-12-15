@@ -14,13 +14,25 @@ class ProductController() {
     private val mapper = jacksonObjectMapper()
 
     val handlerGetProducts = Handler<RoutingContext> { req ->
-        fun products() = productsDb.getProducts()
-        println(products())
-        var list = productsDb.getProducts()
-        println(list)
+        var productList = productsDb.getProducts()
 
-        val productList = products()
         req.response().endWithJson(productList)
+    }
+
+    val handlerGetProduct = Handler<RoutingContext> { req ->
+        val prodId = req.request().getParam("id").toLongOrNull()
+        var product : Product? = null
+
+        if (prodId != null) {
+            product = productsDb.getProductById(prodId)
+        }
+
+        if (prodId == null || product == null) {
+            req.response().setStatusCode(404).end("RECORD NOT FOUND")
+        } else {
+            req.response().endWithJson(product)
+        }
+
     }
 
     val handlerPostProducts = Handler<RoutingContext> { req ->

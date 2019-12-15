@@ -26,13 +26,15 @@ class MainVerticle : AbstractVerticle() {
     private fun createRouter() = Router.router(vertx).apply {
         get("/").handler(handlerRoot)
 
-        get("/api/categories").handler(CategoryController().handlerGetCategories)
         post("/api/categories").handler(CategoryController().handlerPostCategories)
+        get("/api/categories").handler(CategoryController().handlerGetCategories)
+        get("/api/categories/:id").handler(CategoryController().handlerGetCategory)
         put("/api/categories/:id").handler(CategoryController().handlerPutCategories)
         delete("/api/categories/:id").handler(CategoryController().handlerDeleteCategories)
         
-        get("/api/products").handler(ProductController().handlerGetProducts)
         post("/api/products").handler(ProductController().handlerPostProducts)
+        get("/api/products").handler(ProductController().handlerGetProducts)
+        get("/api/products/:id").handler(ProductController().handlerGetProduct)
         put("/api/products/:id").handler(ProductController().handlerPutProducts)
         delete("/api/products/:id").handler(ProductController().handlerDeleteProducts)
     }
