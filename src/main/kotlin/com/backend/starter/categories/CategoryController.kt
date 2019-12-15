@@ -1,15 +1,12 @@
 package com.backend.starter
 
-import org.springframework.beans.factory.annotation.Autowired
-import io.vertx.core.AbstractVerticle
 import io.vertx.core.Handler
-import io.vertx.core.Promise
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
-import io.vertx.ext.web.Router
-import io.vertx.ext.web.RoutingContext
 import io.vertx.core.http.HttpServerResponse
+import io.vertx.ext.web.RoutingContext
 import com.fasterxml.jackson.module.kotlin.*
+import org.springframework.beans.factory.annotation.Autowired
 
 class CategoryController() {
     // Can I declare de routes handlers here?

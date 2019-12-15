@@ -17,17 +17,17 @@ data class Product(
         
         fun getProducts() = products
 
-        fun addProduct(product: Product): Product {
-            product.id = products.size.toLong()
-            products.add(product)
-            return product
-        }
-
         fun getProductById(id: Long): Product?{
             var product = products.find {
                 it.id == id
             }
 
+            return product
+        }
+
+        fun addProduct(product: Product): Product {
+            product.id = products.size.toLong()
+            products.add(product)
             return product
         }
 
@@ -41,7 +41,7 @@ data class Product(
             return product         
         }
         
-        fun editProductById(id: Long?, body: Product): Product?{
+        fun editProduct(id: Long?, body: Product): Product?{
             var product = products.indexOfFirst {
                 it.id == id
             }
