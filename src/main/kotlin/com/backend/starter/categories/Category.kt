@@ -30,6 +30,16 @@ data class Category(
 
             return category
         }
+
+        fun deleteCategory(id: Long?): Category?{
+            var category = categories.find {
+                it.id == id
+            }
+
+            categories.remove(category) 
+            
+            return category         
+        }
         
         fun editCategoryById(id: Long?, body: Category): Category?{
             var category = categories.indexOfFirst {

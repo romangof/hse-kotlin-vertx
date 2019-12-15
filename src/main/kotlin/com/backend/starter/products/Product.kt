@@ -30,12 +30,23 @@ data class Product(
 
             return product
         }
+
+        fun deleteProduct(id: Long?): Product?{
+            var product = products.find {
+                it.id == id
+            }
+
+            products.remove(product) 
+            
+            return product         
+        }
         
         fun editProductById(id: Long?, body: Product): Product?{
             var product = products.indexOfFirst {
                 it.id == id
             }
 
+            // TODO: fix overriding whole object
             products.set(product, body)
 
             return products.find{ it.id == id }
