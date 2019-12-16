@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-// import { DeleteIcon } from '@material-ui/icons';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Paper, IconButton, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import PropTypes from 'prop-types';
+import pluralize from 'pluralize';
 import axios from 'axios';
 import _ from 'lodash';
 
@@ -31,7 +32,7 @@ export default function EntityCard({entity}) {
 
     useEffect(() => {
         async function getEntityList() {
-            const data = await makeRequest('get', entity || 'categories');
+            const data = await makeRequest('get', pluralize(entity));
 
             setEntityList(prevState => ([ ...prevState, ...data ]));
         }
@@ -39,26 +40,25 @@ export default function EntityCard({entity}) {
         getEntityList();
     }, [entity]);
 
-
     const addEntity = async (value) => {
-        const data = await makeRequest('post', entity || 'categories', value)
+        const data = await makeRequest('post', pluralize(entity), value)
 
         setEntityList(prevState => ([...prevState, data]));
     }
 
     const removeEntity = async (value) => {
-        const data = await makeRequest('delete', `${entity || 'categories'}/${value}`)
+        const data = await makeRequest('delete', `${pluralize(entity)}/${value}`)
 
         setEntityList(prevState => _.reject(prevState, data));
     }
 
     return (
         <Paper elevation={3} className={classes.root}>
-            <CardHeader addEntity={addEntity} />
+            <CardHeader addEntity={addEntity} entityName={_.capitalize(pluralize(entity))}/>
 
             <List component="nav" className={classes.root} aria-label="contacts">
                 {_.map(entityList, object => (
-                    <ListItem button>
+                    <ListItem key={`${object.id}-${object.name}`} button>
                         {/* Missing edit in here */}
                         <ListItemText primary={object.name} secondary={object.description} />
                         {/* Need to fix id generation in backend so there's no repeated ids */}
@@ -73,3 +73,7 @@ export default function EntityCard({entity}) {
         </Paper>
     );
 }
+
+EntityCard.propTypes = {
+    entity: PropTypes.string.isRequired
+};

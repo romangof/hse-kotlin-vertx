@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Button, Toolbar, FormControl, Typography, TextField } from '@material-ui/core';
 
@@ -13,10 +14,10 @@ const useStyles = makeStyles(theme => ({
         minWidth: 120,
         padding: theme.spacing(1),
         flexDirection: "row"
-    },
+    }
 }));
 
-export default function CardHeader({ addEntity }) {
+export default function CardHeader({ addEntity, entityName }) {
     const classes = useStyles();
 
     const [entity, setEntity] = React.useState('');
@@ -33,7 +34,7 @@ export default function CardHeader({ addEntity }) {
             <Toolbar className={classes.toolbar}>
 
                 <Typography variant="h5" gutterBottom>
-                    Categories
+                    {entityName}
                 </Typography>
 
                 <FormControl className={classes.formControl}>
@@ -54,3 +55,8 @@ export default function CardHeader({ addEntity }) {
         </AppBar>
     );
 }
+
+CardHeader.propTypes = {
+    addEntity: PropTypes.func.isRequired,
+    entityName: PropTypes.string.isRequired
+};
