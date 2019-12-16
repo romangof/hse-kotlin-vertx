@@ -84,12 +84,13 @@ tasks.create("buildFrontend", YarnTask) {
 
 tasks.create("copyToWebRoot", Copy) {
   from("src/main/frontend/build")
-  destinationDir = file("${buildDir}/classes/kotlin/main/com/webroot")
+  destinationDir = file("${buildDir}/classes/kotlin/main/webroot")
   dependsOn("buildFrontend")
 }
 
 tasks.named("processResources", ProcessResources) {
-  dependsOn(copyToWebRoot)
+  // Classes calls this and it goes in a loop
+  dependsOn("copyToWebRoot")
 }
 
 run {
