@@ -78,16 +78,14 @@ class CategoryController() {
     }
     
     val handlerDeleteCategories = Handler<RoutingContext> { req ->
-        req.request().bodyHandler({ body ->
-            val catId = req.request().getParam("id").toLongOrNull()
-            val deleted = categoriesDb.deleteCategory(catId)
+        val catId = req.request().getParam("id").toLongOrNull()
+        val deleted = categoriesDb.deleteCategory(catId)
 
-            if (catId == null || deleted == null) {
-                req.response().setStatusCode(404).end("RECORD NOT FOUND")
-            } else {
-                req.response().endWithJson(deleted)
-            }
-        })
+        if (catId == null || deleted == null) {
+            req.response().setStatusCode(404).end("RECORD NOT FOUND")
+        } else {
+            req.response().endWithJson(deleted)
+        }
     }
 
     fun HttpServerResponse.endWithJson(obj: Any) { 

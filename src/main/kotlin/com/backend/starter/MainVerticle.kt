@@ -7,6 +7,7 @@ import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.StaticHandler 
 
 class MainVerticle : AbstractVerticle() {
     override fun start(startFuture: Future<Void>) {
@@ -24,8 +25,6 @@ class MainVerticle : AbstractVerticle() {
     }
 
     private fun createRouter() = Router.router(vertx).apply {
-        get("/").handler(handlerRoot)
-
         post("/api/categories").handler(CategoryController().handlerPostCategories)
         get("/api/categories").handler(CategoryController().handlerGetCategories)
         get("/api/categories/:id").handler(CategoryController().handlerGetCategory)
@@ -37,12 +36,14 @@ class MainVerticle : AbstractVerticle() {
         get("/api/products/:id").handler(ProductController().handlerGetProduct)
         put("/api/products/:id").handler(ProductController().handlerPutProducts)
         delete("/api/products/:id").handler(ProductController().handlerDeleteProducts)
+
+        get("/api/message").handler({ rc ->
+            println(123123123)
+            rc.response().end("Hello React from Vert.x!")
+        })
+
+        get("/*").handler(handlerRoot)
     }
     
-    val handlerRoot = Handler<RoutingContext> { req ->
-        // react goes here
-        req.response().end("Welcome!")
-    }
+    val handlerRoot = StaticHandler.create().setCachingEnabled(false)
 }
-
-

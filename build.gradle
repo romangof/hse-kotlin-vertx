@@ -5,7 +5,9 @@ plugins {
   id 'org.jetbrains.kotlin.jvm' version '1.3.20'
   id "org.jetbrains.kotlin.plugin.jpa" version "1.3.20"
   id "org.jetbrains.kotlin.plugin.spring" version "1.3.20"
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
+  id 'com.github.johnrengelman.shadow' version '4.0.3'
+  // id 'com.moowork.node' version "1.3.1" // Doesn't work with gradle under version 5 
+  id "com.github.node-gradle.node" version "2.2.0"
 }
 
 group = 'com.backend'
@@ -26,6 +28,13 @@ application {
   mainClassName = 'io.vertx.core.Launcher'
 }
 
+node {
+  version = "12.8.1"
+  npmVersion = "6.13.0"
+  yarnVersion = '1.19.1'
+  download = true
+  nodeModulesDir = file("src/main/frontend")
+}
 
 def mainVerticleName = 'com.backend.starter.MainVerticle'
 def watchForChange = 'src/**/*'
@@ -47,7 +56,6 @@ compileKotlin {
   kotlinOptions.jvmTarget = '1.8'
 }
 
-
 compileTestKotlin {
   kotlinOptions.jvmTarget = '1.8'
 }
@@ -67,6 +75,21 @@ test {
   testLogging {
     events 'PASSED', 'FAILED', 'SKIPPED'
   }
+}
+
+tasks.create("buildFrontend", YarnTask) {
+  setArgs(["run", "build"])
+  dependsOn("yarn_install")
+}
+
+tasks.create("copyToWebRoot", Copy) {
+  from("src/main/frontend/build")
+  destinationDir = file("${buildDir}/classes/kotlin/main/com/webroot")
+  dependsOn("buildFrontend")
+}
+
+tasks.named("processResources", ProcessResources) {
+  dependsOn(copyToWebRoot)
 }
 
 run {
